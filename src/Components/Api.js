@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ListImages from './images'
 
-window['offset'] = 0;
+//window['offset'] = 0;
 
 class App extends React.Component {
     constructor(props) {
@@ -10,7 +10,8 @@ class App extends React.Component {
             term: '',
             img: '',
             images: [],
-            pagination: { total_count: 0, count: 0, offset: 0 }
+            pagination: { total_count: 0, count: 0, offset: 0 },
+            offset : 0
         };
     }
 
@@ -23,26 +24,26 @@ class App extends React.Component {
         var offset = {...this.state.offset}
 
         //alert(offset);
-        this.setState({
-            ...this.state,
+        this.setState((state)=>({
+            ...state,
             //term: '',
             img: data.data[0].images.fixed_height.url,
             //images : [...this.state.images,data.data],
-            images : this.state.images.concat(data.data),
+            images : state.images.concat(data.data),
             //images: data.data,
             total_count : data.pagination.total_count,
-            offset : data.pagination.offset,
+            offset :  data.state.offset,
             count : data.pagination.count,
 
-        });
-        window['offset'] = data.pagination.offset;
+        }));
+        //window['offset'] = data.pagination.offset;
         console.log(this.state);
         console.log(data);
     }
     handleSubmit = (event) => {
         event.preventDefault();
         const api_key = 'sLZYU7lvnhUT11k7JVn3YdiN8DmGaYli';
-        const url = `http://api.giphy.com/v1/gifs/search?q=${this.state.term}&api_key=${api_key}&offset=`+window['offset'];
+        const url = `http://api.giphy.com/v1/gifs/search?q=${this.state.term}&api_key=${api_key}&offset=${this.state.offset}`;
         fetch(url)
             .then(response => response.json())
             .then(data =>
@@ -52,12 +53,14 @@ class App extends React.Component {
     }
     handleLoadNextRecords = (e) => {
 
-        // this.setState((state)=>({
-        //     ... this.state,
-        //     offset: this.state.offset + 25
-        // }));
+         this.setState((state)=>({
+             ... state,
+             offset: state.offset + 25
+         }));
 
-        window['offset'] = window['offset'] + 25;
+
+
+        //window['offset'] = window['offset'] + 25;
 
     //     this.setState({ ... this.state,
     //         offset: this.state.offset + 25 }, function () {
